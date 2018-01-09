@@ -1,0 +1,63 @@
+/**
+ * Definition for singly-linked list with a random pointer.
+ * struct RandomListNode {
+ *     int label;
+ *     RandomListNode *next, *random;
+ *     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+ * };
+ 
+    剑指Offer 面试题２６　复杂链表的复制
+ */
+class Solution {
+public:
+    RandomListNode *copyRandomList(RandomListNode *head) {
+        CloneNodes(head);
+        ConnectRandomNodes(head);
+        return ReconnectNodes(head);
+    }
+
+    
+    void CloneNodes(RandomListNode* pHead){
+        RandomListNode *pNode=pHead;
+        while(pNode!=NULL){
+            RandomListNode *pCloned;//= new RandomListNode();
+            /* copy the node and create the new node */
+            pCloned=new RandomListNode(pNode->label);
+           // pCloned->label=pNode->label;
+            pCloned->next=pNode->next;
+            pCloned->random=NULL;
+            
+            pNode->next=pCloned;// connect the new clone node to the old node
+            pNode=pCloned->next;// push forward = i++
+        }
+    }
+    
+    void ConnectRandomNodes(RandomListNode *pHead){
+        RandomListNode *pNode=pHead;
+        while(pNode!= NULL){
+            RandomListNode *pCloned=pNode->next;
+            if(pNode->random!=NULL){
+                pCloned->random = pNode->random->next;// pNode->random->next point to the next Clone Node which can see the graph of the P149
+            }
+            pNode= pCloned->next;// push forward to the next Node
+        }
+    }
+    RandomListNode * ReconnectNodes(RandomListNode *pHead){
+        RandomListNode *pNode=pHead;
+        RandomListNode *pClonedHead=NULL;
+        RandomListNode *pClonedNode = NULL;
+        if(pNode!=NULL){
+            pClonedHead= pClonedNode= pNode-> next;
+            pNode->next=pClonedNode->next;
+            pNode = pNode->next;
+        }
+        while(pNode!= NULL){
+            pClonedNode->next= pNode->next;
+            pClonedNode=pClonedNode->next;
+            pNode->next=pClonedNode->next;
+            pNode=pNode->next;
+        }
+        return pClonedHead;
+    }
+    
+};
