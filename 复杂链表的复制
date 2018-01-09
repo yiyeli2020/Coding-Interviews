@@ -1,0 +1,44 @@
+/**
+ * Definition for singly-linked list with a random pointer.
+ * struct RandomListNode {
+ *     int label;
+ *     RandomListNode *next, *random;
+ *     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+ * };
+ 
+    剑指Offer 面试题２６　复杂链表的复制
+ */
+class Solution {
+public:
+    RandomListNode *copyRandomList(RandomListNode *head) {
+        
+    }
+
+    
+    void CloneNodes(RandomListNode* pHead){
+        RandomListNode *pNode=pHead;
+        while(pNode!=NULL){
+            RandomListNode *pCloned= new RandomListNode();
+            /* copy the node and create the new node */
+            pCloned->label=pNode->label;
+            pCloned->next=pNode->next;
+            pCloned->random=NULL;
+            
+            pNode->next=pCloned;// connect the new clone node to the old node
+            pNode=pCloned->next;// push forword = i++
+        }
+    }
+    
+    void ConnectSiblingNodes(RandomListNode *pHead){
+        RandomListNode *pNode=pHead;
+        while(pNode!= NULL){
+            RandomListNode *pCloned=pNode->next;
+            if(pNode->random!=NULL){
+                pCloned->random = pNode->random->next;
+            }
+            pNode= pCloned->next;
+        }
+        
+    }
+    
+};
