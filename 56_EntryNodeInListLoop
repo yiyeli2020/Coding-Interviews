@@ -1,0 +1,334 @@
+#include<iostream>
+#include"List.h"
+using namespace std;
+/*
+	The Meeting Node must in the circle.
+*/
+ListNode * MeetingNode(ListNode *pHead) {
+	cout << "call the MeetingNode function" << endl;
+	if (pHead == NULL) return NULL;
+	
+	ListNode *SlowNode = pHead->m_pNext;
+	ListNode *FastNode = pHead;
+	if (SlowNode == NULL) return NULL;
+
+	FastNode = FastNode->m_pNext;
+	if (FastNode == NULL) return NULL;
+	FastNode = FastNode->m_pNext;
+	//cout << "SlowNode=" << SlowNode->m_nValue << "   FastNode=" << FastNode->m_nValue << endl;
+	while (FastNode != NULL && SlowNode != NULL) {
+		if (FastNode == SlowNode) return FastNode;
+		
+		SlowNode = SlowNode->m_pNext;
+		if (SlowNode == NULL) return NULL;
+		// error 1:FastNode = SlowNode->m_pNext; Fast must move two steps after the Slow
+		// error: FastNode = FastNode->m_pNext->m_pNext;
+		FastNode = FastNode->m_pNext;
+		if (FastNode == NULL) return NULL;
+		FastNode = FastNode->m_pNext;
+		cout << "SlowNode="<<SlowNode->m_nValue<<"   FastNode=" << FastNode->m_nValue << endl;
+	}
+	return NULL;
+}
+ListNode * EntryNodeInListLoop(ListNode *pHead) {
+	ListNode *FastNode = pHead;
+	ListNode *SlowNode = pHead;
+	ListNode *pNode = MeetingNode(pHead);
+	if (pNode == NULL) return NULL;
+	cout << "The MeetingNode function end and the MeetingNode="<<pNode->m_nValue << endl;
+	ListNode *pNodefast = pNode;
+	/*error : 
+	int circlelen = 0;
+	while (pNodefast != pNode) {*/
+	int circlelen = 1;
+	while(pNodefast->m_pNext!= pNode){
+		circlelen++;
+		pNodefast = pNodefast->m_pNext;
+	}
+	cout << "EntryNode=" << FastNode->m_nValue <<"  pNodefast="<<pNodefast->m_nValue<< "   circlelen=" << circlelen << "   pNode=" << pNode->m_nValue << endl;
+	for (int i = 0; i < circlelen; i++) {
+		FastNode = FastNode->m_pNext;
+	}
+	while (FastNode != NULL && SlowNode != NULL && FastNode != SlowNode) {
+		FastNode = FastNode->m_pNext;
+		SlowNode = SlowNode->m_pNext;
+	}
+	return FastNode;
+}
+
+
+
+// ====================测试代码====================
+void DestroyList(ListNode* pHead);
+void DestroyNode(ListNode* pNode);
+void RemoveNode(ListNode** pHead, int value);
+ListNode* CreateListNode(int value);
+void ConnectListNodes(ListNode* pCurrent, ListNode* pNext);
+void PrintListNode(ListNode* pNode);
+void PrintList(ListNode* pHead);
+void AddToTail(ListNode** pHead, int value);
+
+void DestroyList(ListNode* pHead)
+{
+	ListNode* pNode = pHead;
+	while (pNode != NULL)
+	{
+		pHead = pHead->m_pNext;
+		delete pNode;
+		pNode = pHead;
+	}
+}
+void DestroyNode(ListNode* pNode)
+{
+	delete pNode;
+	pNode = nullptr;
+}
+
+ListNode* CreateListNode(int value)
+{
+	ListNode* pNode = new ListNode();
+	pNode->m_nValue = value;
+	pNode->m_pNext = NULL;
+
+	return pNode;
+}
+
+void ConnectListNodes(ListNode* pCurrent, ListNode* pNext)
+{
+	if (pCurrent == NULL)
+	{
+		printf("Error to connect two nodes.\n");
+		exit(1);
+	}
+
+	pCurrent->m_pNext = pNext;
+}
+
+void PrintListNode(ListNode* pNode)
+{
+	if (pNode == NULL)
+	{
+		printf("The node is NULL\n");
+	}
+	else
+	{
+		printf("The key in node is %d.\n", pNode->m_nValue);
+	}
+}
+
+void PrintList(ListNode* pHead)
+{
+	printf("PrintList starts.\n");
+
+	ListNode* pNode = pHead;
+	while (pNode != NULL)
+	{
+		printf("%d\t", pNode->m_nValue);
+		pNode = pNode->m_pNext;
+	}
+
+	printf("\nPrintList ends.\n");
+}
+
+void AddToTail(ListNode** pHead, int value)
+{
+	ListNode* pNew = new ListNode();
+	pNew->m_nValue = value;
+	pNew->m_pNext = NULL;
+
+	if (*pHead == NULL)
+	{
+		*pHead = pNew;
+	}
+	else
+	{
+		ListNode* pNode = *pHead;
+		while (pNode->m_pNext != NULL)
+			pNode = pNode->m_pNext;
+
+		pNode->m_pNext = pNew;
+	}
+}
+
+void RemoveNode(ListNode** pHead, int value)
+{
+	if (pHead == NULL || *pHead == NULL)
+		return;
+
+	ListNode* pToBeDeleted = NULL;
+	if ((*pHead)->m_nValue == value)
+	{
+		pToBeDeleted = *pHead;
+		*pHead = (*pHead)->m_pNext;
+	}
+	else
+	{
+		ListNode* pNode = *pHead;
+		while (pNode->m_pNext != NULL && pNode->m_pNext->m_nValue != value)
+			pNode = pNode->m_pNext;
+
+		if (pNode->m_pNext != NULL && pNode->m_pNext->m_nValue == value)
+		{
+			pToBeDeleted = pNode->m_pNext;
+			pNode->m_pNext = pNode->m_pNext->m_pNext;
+		}
+	}
+}
+// ==================== Test Code ====================
+void Test(char* testName, ListNode* pHead, ListNode* entryNode)
+{
+	if (testName != nullptr)
+		printf("%s begins: ", testName);
+
+	if (EntryNodeInListLoop(pHead) == entryNode)
+		printf("Passed.\n");
+	else
+		printf("FAILED.\n");
+}
+
+// A list has a node, without a loop
+void Test1()
+{
+	ListNode* pNode1 = CreateListNode(1);
+
+	Test("Test1", pNode1, nullptr);
+
+	DestroyList(pNode1);
+}
+
+// A list has a node, with a loop
+void Test2()
+{
+	ListNode* pNode1 = CreateListNode(1);
+	ConnectListNodes(pNode1, pNode1);
+
+	Test("Test2", pNode1, pNode1);
+
+	delete pNode1;
+	pNode1 = nullptr;
+}
+
+// A list has multiple nodes, with a loop 
+void Test3()
+{
+	ListNode* pNode1 = CreateListNode(1);
+	ListNode* pNode2 = CreateListNode(2);
+	ListNode* pNode3 = CreateListNode(3);
+	ListNode* pNode4 = CreateListNode(4);
+	ListNode* pNode5 = CreateListNode(5);
+
+	ConnectListNodes(pNode1, pNode2);
+	ConnectListNodes(pNode2, pNode3);
+	ConnectListNodes(pNode3, pNode4);
+	ConnectListNodes(pNode4, pNode5);
+	ConnectListNodes(pNode5, pNode3);
+
+	Test("Test3", pNode1, pNode3);
+
+	delete pNode1;
+	pNode1 = nullptr;
+	delete pNode2;
+	pNode2 = nullptr;
+	delete pNode3;
+	pNode3 = nullptr;
+	delete pNode4;
+	pNode4 = nullptr;
+	delete pNode5;
+	pNode5 = nullptr;
+}
+
+// A list has multiple nodes, with a loop 
+void Test4()
+{
+	ListNode* pNode1 = CreateListNode(1);
+	ListNode* pNode2 = CreateListNode(2);
+	ListNode* pNode3 = CreateListNode(3);
+	ListNode* pNode4 = CreateListNode(4);
+	ListNode* pNode5 = CreateListNode(5);
+
+	ConnectListNodes(pNode1, pNode2);
+	ConnectListNodes(pNode2, pNode3);
+	ConnectListNodes(pNode3, pNode4);
+	ConnectListNodes(pNode4, pNode5);
+	ConnectListNodes(pNode5, pNode1);
+
+	Test("Test4", pNode1, pNode1);
+
+	delete pNode1;
+	pNode1 = nullptr;
+	delete pNode2;
+	pNode2 = nullptr;
+	delete pNode3;
+	pNode3 = nullptr;
+	delete pNode4;
+	pNode4 = nullptr;
+	delete pNode5;
+	pNode5 = nullptr;
+}
+
+// A list has multiple nodes, with a loop 
+void Test5()
+{
+	ListNode* pNode1 = CreateListNode(1);
+	ListNode* pNode2 = CreateListNode(2);
+	ListNode* pNode3 = CreateListNode(3);
+	ListNode* pNode4 = CreateListNode(4);
+	ListNode* pNode5 = CreateListNode(5);
+
+	ConnectListNodes(pNode1, pNode2);
+	ConnectListNodes(pNode2, pNode3);
+	ConnectListNodes(pNode3, pNode4);
+	ConnectListNodes(pNode4, pNode5);
+	ConnectListNodes(pNode5, pNode5);
+
+	Test("Test5", pNode1, pNode5);
+
+	delete pNode1;
+	pNode1 = nullptr;
+	delete pNode2;
+	pNode2 = nullptr;
+	delete pNode3;
+	pNode3 = nullptr;
+	delete pNode4;
+	pNode4 = nullptr;
+	delete pNode5;
+	pNode5 = nullptr;
+}
+
+// A list has multiple nodes, without a loop 
+void Test6()
+{
+	ListNode* pNode1 = CreateListNode(1);
+	ListNode* pNode2 = CreateListNode(2);
+	ListNode* pNode3 = CreateListNode(3);
+	ListNode* pNode4 = CreateListNode(4);
+	ListNode* pNode5 = CreateListNode(5);
+
+	ConnectListNodes(pNode1, pNode2);
+	ConnectListNodes(pNode2, pNode3);
+	ConnectListNodes(pNode3, pNode4);
+	ConnectListNodes(pNode4, pNode5);
+
+	Test("Test6", pNode1, nullptr);
+
+	DestroyList(pNode1);
+}
+
+// Empty list
+void Test7()
+{
+	Test("Test7", nullptr, nullptr);
+}
+
+int main(int argc, char* argv[])
+{
+	Test1();
+	Test2();
+	Test3();
+	Test4();
+	Test5();
+	Test6();
+	Test7();
+
+	return 0;
+}
