@@ -1,0 +1,24 @@
+class Solution {
+public:
+    bool VerifySquenceOfBST(vector<int> sequence) {
+        if(sequence.empty()) return false;
+        return SquenceBST( sequence, 0,sequence.size());
+    }
+    bool SquenceBST(vector<int> &sequence,int start,int end){
+        
+        int root=sequence[end-1];
+        int i=start;
+        for(;i<end-1;i++){
+            if(sequence[i]>root) break;
+        }
+        int j=i;
+        for(;j<end-1;j++){
+            if(sequence[j]<root) return false;
+        }
+        bool left=true;
+        if(i>start) left=SquenceBST(sequence,start,i-1);
+        bool right=true;
+        if(i<end-1) right=SquenceBST(sequence,i,end-1);
+        return left & right;
+    }
+};
