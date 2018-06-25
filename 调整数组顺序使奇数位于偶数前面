@@ -1,0 +1,30 @@
+class Solution {
+public:
+    bool isEven(int n){
+        return (n%2==0);
+    }
+    void reOrderArray(vector<int> &array) {
+        int len=array.size();
+        if(len<=1) return;
+        int pBegin=0;// the index of the first even number
+         int pEnd=pBegin;// the index of the first odd number
+        while(pBegin<len && pEnd<len){
+           while(pBegin<len && pEnd<len && !isEven(array[pBegin])){
+               pBegin++;
+           }
+           pEnd=pBegin+1;
+           while(pBegin<len && pEnd<len && isEven(array[pEnd])){
+               pEnd++;
+           }
+           if(pEnd<len){
+               int temp=array[pEnd];
+               for(int j=pEnd;j>pBegin;j--){
+                   array[j]=array[j-1];
+               }
+               array[pBegin]=temp;
+               
+           }
+        }
+    }
+    
+};
