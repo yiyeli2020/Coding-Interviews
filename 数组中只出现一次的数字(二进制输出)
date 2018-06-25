@@ -1,0 +1,68 @@
+class Solution{
+public:
+    void FindOnce(vector<int> nums,int *num){
+        int len=nums.size();
+        
+        for(int i=0;i<len;i++){
+           *num=*num^nums[i];
+        }
+    }
+    int FindDif(vector<int> data){
+        int num=0;
+        for(int i=0;i<data.size();i++){
+            num=num ^ data[i];
+        }
+        return num;
+    }
+    int indexofnum(vector<int> data){
+        int num=FindDif(data);
+        
+        bitset<5> bs(num);
+        cout<<"输出全部异或后的数字"<<endl<<bs<<endl;
+        int index=1;
+        while((index & num) ==0){ //error &的结合顺序低于==，所以不能index & num ==0
+            index=index<<1;
+        }
+                bitset<5> in(index);
+        cout<<"输出全部标志数字"<<endl<<in<<endl;
+        return index;
+    }
+    void FindNumsAppearOnce(vector<int> data,int* num1,int *num2) {
+        vector<int> nums1,nums2;
+        int index=indexofnum(data);
+        for(int i=0;i<data.size();i++){
+            if(data[i] & index){
+                nums1.push_back(data[i]);//标志位置为１的数
+            }
+            else nums2.push_back(data[i]);
+        }
+        *num1=*num2=0;
+        FindOnce(nums1,num1);
+        FindOnce(nums2,num2);
+    }
+};
+#include<iostream>
+#include<bitset>
+using namespace std;
+int  main(){
+//     cout<<hex<<i<<endl; //输出十六进制数
+// cout<<oct<<i<<endl; //输出八进制数
+// cout<<dec<<i<<endl; //输出十进制数
+
+// cout<<bin<<i<<endl; //输出二进制数
+
+// // 输出16进制， setbase（int）可以设置8等。
+
+//  cout << setbase(16) << i << endl;
+    int num[]={2,4,3,6,3,2,5,5};
+    vector<int> data(&num[0],&num[8]);//空间为左闭右开，所以加的长度比原数组多１
+   for(int i=0;i<data.size();i++){ 
+       bitset<5> bs(data[i]); //用二进制格式输出十进制数字
+       cout<<bs<<endl;
+   }
+    int num1,num2;
+    Solution s;
+    s.FindNumsAppearOnce(data,&num1,&num2);
+    cout<<num1<<endl<<num2<<endl;
+    return 0;
+}
