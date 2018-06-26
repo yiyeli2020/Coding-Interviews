@@ -1,0 +1,39 @@
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* ConstructCore(vector<int> pre,vector<int> vin,int startpre,int endpre,int startvin,int endvin){
+        int rootvalue=pre[startpre];
+        TreeNode* root=new TreeNode(rootvalue);
+       // root->val=rootvalue;
+        root->left=NULL;
+        root->right=NULL;
+        if(startpre==endpre){
+            if(startvin==endvin && pre[startpre]==vin[startvin]) return root;
+        }
+        int rootvin=startvin;
+        while(rootvin<endvin && vin[rootvin]!=rootvalue){
+            rootvin++;
+        }
+        int leftlen=rootvin-startvin;
+        int rightlen=endvin-startvin-leftlen;
+        if(leftlen>0){
+            root->left=ConstructCore(pre,vin,startpre+1,startpre+leftlen,startvin,rootvin-1);
+        }
+        if(rightlen>0){
+            root->right=ConstructCore(pre,vin,startpre+leftlen+1,endpre,rootvin+1,endvin);
+        }
+        return root;
+    }
+    TreeNode* reConstructBinaryTree(vector<int> pre,vector<int> vin) {
+        if(pre.size()==0 || vin.size()==0) return NULL;
+        return ConstructCore(pre,vin,0,pre.size()-1,0,vin.size()-1);
+    }
+};
