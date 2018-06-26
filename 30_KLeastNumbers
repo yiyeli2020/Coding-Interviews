@@ -1,0 +1,30 @@
+class Solution {
+public:
+    vector<int> GetLeastNumbers_Solution(vector<int> input, int k) {
+        multiset<int,greater<int>> intSet;
+        intSet.clear();
+        vector<int> res;
+        if(k<1 || input.size()<k) return res;
+        vector<int>:: const_iterator iter;
+        multiset<int,greater<int>> ::iterator setIterator;
+        multiset<int,greater<int>> ::iterator setGreatest;
+        for(iter=input.begin();iter<input.end();iter++){//iter不能等于input.end(),否则会混入０
+            if(intSet.size()<k){
+                intSet.insert(*iter);
+            }
+            else{
+                setGreatest=intSet.begin();
+                if(*iter<*setGreatest){
+                    intSet.erase(setGreatest);
+                    intSet.insert(*iter);
+                }
+            }
+        }
+        while(intSet.size()!=0){
+            setIterator=intSet.begin();
+            res.push_back(*setIterator);
+            intSet.erase(setIterator);
+        }
+        return res;
+    }
+};
