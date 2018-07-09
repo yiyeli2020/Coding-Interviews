@@ -1,0 +1,37 @@
+class Solution {
+public:
+    vector<string> Permutation(string str) {
+        vector<string> s;
+        if(str.size()==0) return s;
+        Permutation(str,0,s);
+//        sort(s.begin(),s.end());
+//        const vector<string>::iterator pos =unique(s.begin, s.end());
+ //       earse(pos, s.end());  
+        sort(s.begin(),s.end());
+        return s;
+    }
+    void Permutation(string &str,int begin,vector<string> &s){
+        int len=str.size();
+        unordered_set<char> us;  //记录出现过的字符
+        if(begin==len-1){
+            s.push_back(str);
+        }
+        else {
+            for(int i=begin;i<len;i++)
+            {
+               if(us.find(str[i])==us.end()){  //防止出现重复字符串
+                us.insert(str[i]);
+                char temp=str[i];
+                str[i]=str[begin];
+                str[begin]=temp;
+                
+                Permutation(str,begin+1,s);
+                
+                temp=str[i];
+                str[i]=str[begin];
+                str[begin]=temp;}
+
+            }
+        }
+    }
+};
