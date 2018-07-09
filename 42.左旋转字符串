@@ -1,0 +1,21 @@
+class Solution {
+public:
+    void Reverse(int l,int r,string &s){
+        if(s.size()==0) return;
+        while(l<r){
+            char temp=s[r];
+            s[r]=s[l];
+            s[l]=temp;
+            l++;
+            r--;
+        }
+    }
+    string LeftRotateString(string str, int n) {
+        string s(str);
+        //strcpy(s,str);
+        Reverse(0,n-1,s);
+        Reverse(n,str.size()-1,s);
+        Reverse(0,str.size()-1,s);
+        return s;
+    }
+};
