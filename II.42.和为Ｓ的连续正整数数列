@@ -1,0 +1,29 @@
+class Solution {
+public:
+    void push(int small,int big,vector<vector<int>> &res){
+        vector<int> temp;
+        for(int i=small;i<=big;i++){
+            temp.push_back(i);
+        }
+        res.push_back(temp);
+    }
+    
+    vector<vector<int> > FindContinuousSequence(int sum) {
+        vector<vector<int>> res;
+        if(sum<3) return res;
+        int small=1,big=2;
+        int CurSum=small+big;
+        int mid=(1+sum)/2;
+        while(small<mid){
+            if(CurSum==sum) push(small,big,res);
+            while(CurSum>sum && small<mid){
+                CurSum-=small;
+                small++;
+                if(CurSum==sum) push(small,big,res);
+            }
+            big++;
+            CurSum+=big;
+        }
+        return res;
+    }
+};
