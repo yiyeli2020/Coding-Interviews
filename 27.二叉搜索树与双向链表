@@ -1,0 +1,37 @@
+/*
+struct TreeNode {
+	int val;
+	struct TreeNode *left;
+	struct TreeNode *right;
+	TreeNode(int x) :
+			val(x), left(NULL), right(NULL) {
+	}
+};*/
+class Solution {
+public:
+    TreeNode* Convert(TreeNode* pRootOfTree)
+    {
+        TreeNode *pLastNodeInList=NULL;//指向已经转换好的链表的最后一个结点（也就是值最大的节点）
+        ConvertNode(pRootOfTree,&pLastNodeInList);
+        //pLastNodeInList是指向双向链表的尾节点，我们需要找到头结点
+        TreeNode *pHeadOfList=pLastNodeInList;
+        while(pHeadOfList!=NULL &&pHeadOfList->left!=NULL)
+            pHeadOfList=pHeadOfList->left;
+        return pHeadOfList;
+    }
+    void ConvertNode(TreeNode *pNode,TreeNode **pLastNodeInList){
+        if(pNode==NULL) return;
+        TreeNode *pCurrent=pNode;
+        if(pCurrent->left!=NULL)//从最左面的子树开始转换
+            ConvertNode(pCurrent->left,pLastNodeInList);
+        pCurrent->left=*pLastNodeInList;//指向已经转换好的链表的最后一个结点（也就是值最大的节点）
+        if(*pLastNodeInList!=NULL)//将根节点链接到链表中
+            (*pLastNodeInList)->right=pCurrent;
+        
+        *pLastNodeInList=pCurrent;
+        
+        if(pCurrent->right!=NULL)
+            ConvertNode(pCurrent->right,pLastNodeInList);
+        
+    }
+};
